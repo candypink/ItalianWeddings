@@ -12,12 +12,15 @@ class ForumSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse_topic(self, response):
-        title = response.xpath('//meta[@property="og:title"]/@content').get()
-        text = response.xpath('//div[@class="com-post-content left-center-enabled"]/text()').get()
-        #text_comments = 
+        title = response.xpath('//meta[@property="og:title"]/@content').get().strip()
+        text = response.xpath('//div[@class="com-post-content left-center-enabled"]/text()').get().strip()
+        list_text_comments = [x.strip() for x in response.xpath('//div[@class="com-discuss discuss-post-comment-content comment-item-comment left-center-enabled"]/div/text()').getall()]
+        list_date_comments = response.xpath('//div[@class="discuss-post-comment-header"]//time/text()').getall()
         yield{
             'title':title,
-            'text':text
+            'text':text,
+            'comments': list_text_comments,
+            'time':list_date_comments
             }
 
     def parse(self, response):
