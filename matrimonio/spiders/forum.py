@@ -1,5 +1,8 @@
 import scrapy
 
+def clean_time(input):
+    time = input.lower().replace(',','').replace('alle ','').replace('il','').strip()
+    return time
 
 class ForumSpider(scrapy.Spider):
     name = "forum"
@@ -11,7 +14,7 @@ class ForumSpider(scrapy.Spider):
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
             
-    def parse_comment(self,response):
+    def parse_comments(self,response):
         print('   chiara: in test_fun!!')
         i=0
         for comment in response.xpath('//li[@class="pure-g discuss-post-comment"]'):
@@ -23,23 +26,35 @@ class ForumSpider(scrapy.Spider):
             text = list(filter(None, text))
             # join different paragraphs of same comment
             text = ' '.join(text)
-            title = 'comment'
-            print(text)
+            title = 'comment' # comments don't have title, but giving them the titile comment can help distinguish from main thread
+            id = comment.xpath('div//div[@class="discussion-message-globe"]/div[@class="discuss-post-comment-header"]/@id').get().lower().strip()
+            author = comment.xpath('div/a/@data-id-user').get().lower().strip()
+            time = clean_time(comment.xpath('div//time/text()').get())
             yield{
                 'title':title,
-                'text':text
+                'text':text,
+                'id':id,
+                'author':author,
+                'time': time
                 }
 
     def parse_topic(self, response):
         print("chiara: parsing topic")
         title = response.xpath('//meta[@property="og:title"]/@content').get().strip().lower()
         text = response.xpath('//div[contains(@class,"com-post-content")]/text()').get().strip().lower()
+        id = response.xpath('//div[@id="relatedDressesBox"]/@data-idtema').get().lower().strip()
+        author = response.xpath('//div[@class="wrapper main"]//div[contains(@class,"com-post-header-author")]/a/@data-id-user').get().lower().strip()
+        time = clean_time(response.xpath('//span[@class="com-post-header-meta-date"]/text()').getall()[1])
         yield{
             'title':title,
-            'text':text
+            'text':text, 
+            'id':id,
+            'parent_id':id, #for the initial post I set the parent id as the it of the post itself
+            'author':author,
+            'time':time
             }
         # store the comments on the first page of the thread
-        for comment in self.parse_comment(response):
+        for comment in self.parse_comments(response):
             yield comment
         # now I follow the other pages on the same thread
 
