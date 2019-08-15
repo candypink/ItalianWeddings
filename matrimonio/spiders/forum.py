@@ -2,9 +2,9 @@ import scrapy
 from datetime import datetime, timedelta
 
 def clean_time(input):
-    time = input.lower().replace(',','').replace('alle ','').replace('il','').strip()
+    time = input.lower().replace(',','').replace('alle ','').replace('il ',' ').strip()
     to_english={}
-    to_english['gennaio']='jenuary'
+    to_english['gennaio']='january'
     to_english['febbraio']='february'
     to_english['marzo']='march'
     to_english['aprile']='april'
@@ -85,6 +85,6 @@ class ForumSpider(scrapy.Spider):
         for topic_ref in response.xpath('//div[@class="discussion-post-item "]//a[@class="discussion-post-item-title"]'):
             yield response.follow(topic_ref, callback=self.parse_topic)
         # lok at pages after the first one
-        #for a in response.xpath('//a[@class="next"]'):
-        #    yield response.follow(a, callback=self.parse)
+        for a in response.xpath('//a[@class="next"]'):
+            yield response.follow(a, callback=self.parse)
     
