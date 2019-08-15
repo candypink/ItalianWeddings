@@ -64,8 +64,7 @@ class ForumSpider(scrapy.Spider):
         # from the main page, follow each comment to its own page
         for topic_ref in response.xpath('//div[@class="discussion-post-item "]//a[@class="discussion-post-item-title"]'):
             yield response.follow(topic_ref, callback=self.parse_topic)
-        
-        # questa parte funziona 
-        #for a in response.xpath('//a[@class="next"]'):
-        #    yield response.follow(a, callback=self.parse)
+        # lok at pages after the first one
+        for a in response.xpath('//a[@class="next"]'):
+            yield response.follow(a, callback=self.parse)
     
