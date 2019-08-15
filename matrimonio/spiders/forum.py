@@ -14,8 +14,7 @@ class ForumSpider(scrapy.Spider):
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
             
-    def parse_comments(self,response):
-        print('   chiara: in test_fun!!')
+    def parse_comments(self, parent_id, response):
         i=0
         for comment in response.xpath('//li[@class="pure-g discuss-post-comment"]'):
             # take all the text, turn it to lower case and remove extra spaces
@@ -35,11 +34,11 @@ class ForumSpider(scrapy.Spider):
                 'text':text,
                 'id':id,
                 'author':author,
-                'time': time
+                'time': time,
+                'parent_id': parent_id
                 }
 
     def parse_topic(self, response):
-        print("chiara: parsing topic")
         title = response.xpath('//meta[@property="og:title"]/@content').get().strip().lower()
         text = response.xpath('//div[contains(@class,"com-post-content")]/text()').get().strip().lower()
         id = response.xpath('//div[@id="relatedDressesBox"]/@data-idtema').get().lower().strip()
@@ -54,9 +53,12 @@ class ForumSpider(scrapy.Spider):
             'time':time
             }
         # store the comments on the first page of the thread
-        for comment in self.parse_comments(response):
-            yield comment
+        for comment in self.parse_comments( parent_id=id, response=response):
+            yield comment 
         # now I follow the other pages on the same thread
+        for link in response.xpath('/html/head/link[@rel="next"]/@href').getall():
+            yield response.follow(link, callback=lambda y: self.parse_comments(parent_id=id, response=y))
+        
 
     def parse(self, response):
         # from the main page, follow each comment to its own page
