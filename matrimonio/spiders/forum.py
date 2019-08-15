@@ -1,8 +1,29 @@
 import scrapy
+from datetime import datetime, timedelta
 
 def clean_time(input):
     time = input.lower().replace(',','').replace('alle ','').replace('il','').strip()
-    return time
+    to_english={}
+    to_english['gennaio']='jenuary'
+    to_english['febbraio']='february'
+    to_english['marzo']='march'
+    to_english['aprile']='april'
+    to_english['maggio']='may'
+    to_english['giugno']='june'
+    to_english['luglio']='july'
+    to_english['agosto']='august'
+    to_english['settembre']='september'
+    to_english['ottobre']='october'
+    to_english['novembre']='november'
+    to_english['dicembre']='december'
+    to_english['oggi'] =  datetime.today().strftime('%d %B %Y')
+    to_english['ieri'] =  (datetime.today() - timedelta(days=1)).strftime('%d %B %Y')
+    for key in to_english:
+        if key in time:
+            time = time.replace(key, to_english[key])
+            break # only onee month per string!
+    d = datetime.strptime(time, '%d %B %Y %H:%M')
+    return d.strftime('%Y-%m-%d %H:%M')
 
 class ForumSpider(scrapy.Spider):
     name = "forum"
@@ -59,12 +80,11 @@ class ForumSpider(scrapy.Spider):
         for link in response.xpath('/html/head/link[@rel="next"]/@href').getall():
             yield response.follow(link, callback=lambda y: self.parse_comments(parent_id=id, response=y))
         
-
     def parse(self, response):
         # from the main page, follow each comment to its own page
         for topic_ref in response.xpath('//div[@class="discussion-post-item "]//a[@class="discussion-post-item-title"]'):
             yield response.follow(topic_ref, callback=self.parse_topic)
         # lok at pages after the first one
-        for a in response.xpath('//a[@class="next"]'):
-            yield response.follow(a, callback=self.parse)
+        #for a in response.xpath('//a[@class="next"]'):
+        #    yield response.follow(a, callback=self.parse)
     
