@@ -26,9 +26,9 @@ class ForumSpider(scrapy.Spider):
             # join different paragraphs of same comment
             text = ' '.join(text)
             title = 'comment' # comments don't have title, but giving them the titile comment can help distinguish from main thread
-            id = comment.xpath('div//div[@class="discussion-message-globe"]/div[@class="discuss-post-comment-header"]/@id').get().lower().strip()
-            author = comment.xpath('div/a/@data-id-user').get().lower().strip()
-            time = clean_time(comment.xpath('div//time/text()').get())
+            id = comment.xpath('div//div[@class="discussion-message-globe"]/div[@class="discuss-post-comment-header"]/@id').get(default='NA').lower().strip()
+            author = comment.xpath('div/a/@data-id-user').get(default='NA').lower().strip()
+            time = clean_time(comment.xpath('div//time/text()').get(default='NA'))
             yield{
                 'title':title,
                 'text':text,
@@ -39,10 +39,10 @@ class ForumSpider(scrapy.Spider):
                 }
 
     def parse_topic(self, response):
-        title = response.xpath('//meta[@property="og:title"]/@content').get().strip().lower()
-        text = response.xpath('//div[contains(@class,"com-post-content")]/text()').get().strip().lower()
-        id = response.xpath('//div[@id="relatedDressesBox"]/@data-idtema').get().lower().strip()
-        author = response.xpath('//div[@class="wrapper main"]//div[contains(@class,"com-post-header-author")]/a/@data-id-user').get().lower().strip()
+        title = response.xpath('//meta[@property="og:title"]/@content').get(default='NA').strip().lower()
+        text = response.xpath('//div[contains(@class,"com-post-content")]/text()').get(default='NA').strip().lower()
+        id = response.xpath('//div[@id="relatedDressesBox"]/@data-idtema').get(default='NA').lower().strip()
+        author = response.xpath('//div[@class="wrapper main"]//div[contains(@class,"com-post-header-author")]/a/@data-id-user').get(default='NA').lower().strip()
         time = clean_time(response.xpath('//span[@class="com-post-header-meta-date"]/text()').getall()[1])
         yield{
             'title':title,
