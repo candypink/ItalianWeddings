@@ -1,6 +1,8 @@
 # WIP: Trends for Italian weddings
 
-Look into the forum of the popular Italian wedding website [matrimonio.com](http://www.matrimonio.com) 
+While organising my own wedding, I often wondered what other brides whould have thought about my choice 
+of decorations, entertainment, music and so on. To answer these questions, I am 
+look into the forum of the popular Italian wedding website [matrimonio.com](http://www.matrimonio.com) 
 to gain insight on trends related to weddings in Italy. 
 
 ![Scarpe](figures/scarpe.jpg)
