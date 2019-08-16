@@ -23,4 +23,10 @@ in particular:
 removed
 * the date format is changed from a string in italian to a numeric format
 
-
+The output file contains the following information:
+* `title`: title of the post or "comment" in case of comments to a post
+* `text`: body of the message
+* `id`: unique id of the message/comment
+* `parent_id`: for comments id of the original message, for the initial message is the same as the `id`
+* `author`: id of the author of the message/comment
+* `time`: string with time in the format `'%Y-%m-%d %H:%M'`
