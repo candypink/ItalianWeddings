@@ -1,4 +1,9 @@
-# WIP: Trends for Italian weddings
+---
+layout: post
+title:  "WIP: Trends for Italian weddings"
+date:   2019-08-18 22:11:22 +0200
+categories: web scraping 
+---
 
 While organising my own wedding, I often wondered what other brides whould have thought about my choice 
 of decorations, entertainment, music and so on. To answer these questions, I am 
