@@ -1,4 +1,8 @@
-
+---
+layout: post
+title:  "Trends in Italian Weddings"
+date:   2019-08-18 12:11:22 +0200
+---
 
 While organising my own wedding, I often wondered what other brides whould have thought about my choice 
 of decorations, entertainment, music and so on. To answer these questions, I am 
