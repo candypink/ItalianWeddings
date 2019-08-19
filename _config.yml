@@ -1,1 +1,4 @@
 remote_theme: candypink/jekyll-theme-candypink
+plugins:
+ - jekyll-feed
+ - jekyll-seo-tag
