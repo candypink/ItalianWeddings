@@ -1,4 +1,13 @@
+title: A CandyPink Blog
+email: canypink@outlook.it
+
+github_username:  candypink
+
+# Build settings
+markdown: kramdown
+
 remote_theme: candypink/jekyll-theme-candypink
+
 plugins:
  - jekyll-feed
  - jekyll-seo-tag
