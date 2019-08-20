@@ -1,5 +1,6 @@
 title: A CandyPink Blog
 email: candypink@outlook.it
+bloghomeurl: https://candypink.github.io/
 
 github_username:  candypink
 
@@ -20,4 +21,4 @@ navigation:
   - name: About
     link: https://candypink.github.io/about.html
 
-bloghome_url: https://candypink.github.io/
+
