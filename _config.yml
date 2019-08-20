@@ -11,3 +11,11 @@ remote_theme: candypink/jekyll-theme-candypink
 plugins:
  - jekyll-feed
  - jekyll-seo-tag
+
+navigation:
+  - name: Blog
+    link: https://candypink.github.io/blog.html
+  - name: Portfolio
+    link: https://candypink.github.io/portfolio.html
+  - name: AboutMe
+    link: https://candypink.github.io/about.html
