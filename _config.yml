@@ -15,7 +15,7 @@ plugins:
 
 navigation:
   - name: Blog
-    link: https://candypink.github.io/blog.html
+    link: https://candypink.github.io/blog/index.html
   - name: Portfolio
     link: https://candypink.github.io/portfolio.html
   - name: About
