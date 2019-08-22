@@ -1,8 +1,13 @@
 email: candypink@outlook.it
 bloghomeurl: https://candypink.github.io/
 blogtitle: A CandyPink Blog
+description: >- 
+  A CandyPink blog is a space for me to share my learning path in data science
+  and write posts on basically anything I fancy.
 
 github_username:  candypink
+social_links:
+  github:  candypink
 
 # Build settings
 markdown: kramdown
@@ -20,5 +25,4 @@ navigation:
     link: https://candypink.github.io/portfolio.html
   - name: About
     link: https://candypink.github.io/about.html
-
 
