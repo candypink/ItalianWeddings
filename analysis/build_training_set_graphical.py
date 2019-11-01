@@ -44,7 +44,7 @@ class MyGUI:
 
     def set_sentiment(self, val):
         # set the value in the dataframe
-        self.df.ix[self.current_index, 'sentiment'] = val
+        self.df.loc[self.current_index, 'sentiment'] = val
         # prepare for next sentence
         self.current_index +=1
         self.update_text()
