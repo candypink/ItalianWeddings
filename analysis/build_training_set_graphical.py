@@ -11,6 +11,55 @@ import time
 
 import tkinter as tk # for the graphical interface
 
+
+class MyGUI:
+
+    def __init__(self, master, df, out_name):
+        self.df = df
+        self.current_index = 0 # row index in df
+        self.out_name = out_name # where to write df with sentiments
+        # GUI
+        self.master = master
+        master.title('Sentiment analysis')
+
+
+        self.total_processed = tk.IntVar()
+
+        # message text
+        self.text = tk.Text(master, height=10, width=40,
+                       font=("Helvetica", 20))
+        self.update_text()
+        self.text.pack()        
+        # buttons for answer
+        tk.Button(self.master, text='Positive', highlightbackground='green',  
+                  font=("Helvetica", 20),command = lambda: self.set_sentiment(1)).pack(side = tk.LEFT)
+        tk.Button(self.master, text='Negative', highlightbackground='red',  
+                  font=("Helvetica", 20),command = lambda: self.set_sentiment(2)).pack(side = tk.LEFT)
+        tk.Button(self.master, text='Neutral', highlightbackground='blue',  
+                  font=("Helvetica", 20),command = lambda: self.set_sentiment(3)).pack(side = tk.LEFT)
+        tk.Button(self.master, text='Asking', highlightbackground='yellow',  
+                  font=("Helvetica", 20),command = lambda: self.set_sentiment(0)).pack(side = tk.LEFT)
+        tk.Button(self.master, text='EXIT', highlightbackground='grey',  
+                  font=("Helvetica", 20),command = self.stop).pack(side = tk.LEFT)
+
+    def set_sentiment(self, val):
+        # set the value in the dataframe
+        self.df.ix[self.current_index, 'sentiment'] = val
+        # prepare for next sentence
+        self.current_index +=1
+        self.update_text()
+
+    def update_text(self):
+        self.text.delete('1.0', tk.END)        
+        self.text_content = str(self.df.iloc[self.current_index]['title']) +' \n' + str(self.df.iloc[self.current_index]['text'])
+        self.text.insert(tk.INSERT, self.text_content)
+
+    def stop(self):
+        print (f'Writing dataframe in {self.out_name}')
+        df.to_csv(self.out_name)
+        print ('Leaving')
+        self.master.destroy()
+
 if __name__ == '__main__': 
     
     # parser for command-line arguments
@@ -29,65 +78,8 @@ if __name__ == '__main__':
     #logging.info(f'Reading ')
     df = pd.read_csv(args.input)
     # decide name of output file
-    output_created = False
-    if args.replace:
-        output_name = args.input
-    elif args.output:
-        output_name = args.output
-    else:
-        output_name = args.input.replace('.csv','_sentiment.csv')
-    counter_done = 0
-    # loop each row
-    for index, row in df.iterrows():
-        if row['sentiment'] != -99:
-            continue
+    top = tk.Tk()
+    my_gui = MyGUI(top, df, args.output)
+    top.mainloop()
 
-        sentiment = -99
-        def set_value(value):
-            global sentiment
-            sentiment = value
-            top.destroy()            
-        top = tk.Tk()
-        pane = tk.Frame(top)
-        pane.pack(fill = tk.BOTH, expand = True) 
-        text = tk.Text(pane, height=10, width=40,
-                       font=("Helvetica", 20))
-        text.insert(tk.INSERT, row['title'],'\n',row['text'])
-        text.pack()
-        
-        Pos = tk.Button(pane, text ="Positive", 
-                        highlightbackground = "green",
-                        font=("Helvetica", 20), 
-                        command = lambda *args: set_value(1)
-                        )
-        Neg = tk.Button(pane, text ="Negative", 
-                        highlightbackground = "red", 
-                        font=("Helvetica", 20), 
-                        command = lambda *args: set_value(2) )
-        Neu = tk.Button(pane, text ="Neutral", 
-                        highlightbackground = "blue",  
-                        font=("Helvetica", 20),
-                        command = lambda *args: set_value(3) )
-        Ask = tk.Button(pane, text ="Asking", 
-                        highlightbackground = "yellow", 
-                        font=("Helvetica", 20), 
-                        command = lambda *args: set_value(0) )
-
-        
-        Pos.pack(side = tk.LEFT)
-        Neg.pack(side = tk.LEFT)
-        Neu.pack(side = tk.LEFT)
-        Ask.pack(side = tk.LEFT)
-        
-        top.mainloop()
-        print(f'Sentiment {sentiment}')
-        if sentiment not in [0,1,2,3]:
-            logging.warning('Setting sentiment to neutral')
-            sentiment = 3
-        df.at[index,'sentiment'] = sentiment
-        counter_done += 1
-        time.sleep(0.33)
-
-    if not  output_created:
-        df.to_csv(output_name)
 
