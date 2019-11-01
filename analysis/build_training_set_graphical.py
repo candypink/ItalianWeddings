@@ -15,21 +15,26 @@ import tkinter as tk # for the graphical interface
 class MyGUI:
 
     def __init__(self, master, df, out_name):
+
+        # data-frame related
         self.df = df
         self.current_index = 0 # row index in df
         self.out_name = out_name # where to write df with sentiments
+        self.total_processed = 0
+
+        # logger        
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger('SentimentAnalysis')
+
         # GUI
         self.master = master
         master.title('Sentiment analysis')
-
-
-        self.total_processed = tk.IntVar()
-
         # message text
-        self.text = tk.Text(master, height=10, width=40,
-                       font=("Helvetica", 20))
+        self.text = tk.Text(master, height=10, width=60,
+                       font=("Arial", 18), wrap=tk.WORD)
         self.update_text()
         self.text.pack()        
+
         # buttons for answer
         tk.Button(self.master, text='Positive', highlightbackground='green',  
                   font=("Helvetica", 20),command = lambda: self.set_sentiment(1)).pack(side = tk.LEFT)
@@ -48,16 +53,28 @@ class MyGUI:
         # prepare for next sentence
         self.current_index +=1
         self.update_text()
+        # update counter
+        self.total_processed += 1
 
     def update_text(self):
         self.text.delete('1.0', tk.END)        
-        self.text_content = str(self.df.iloc[self.current_index]['title']) +' \n' + str(self.df.iloc[self.current_index]['text'])
-        self.text.insert(tk.INSERT, self.text_content)
+        title = str(self.df.iloc[self.current_index]['title'])
+        message =  str(self.df.iloc[self.current_index]['text'])
+        self.text.insert(tk.INSERT, "Title: ","bold")
+        self.text.insert(tk.INSERT, title+'\n')
+        self.text.insert(tk.INSERT, "Message:\n","bold")
+        self.text.insert(tk.INSERT, message+'\n')
+        self.text.tag_add("start", "1.0", "1.6")
+        self.text.tag_add("start", "2.0", "2.7")
+        self.text.tag_config("start", background="white", foreground="#485161", font=("Helvetica", "20", "bold"))
+
+
 
     def stop(self):
-        print (f'Writing dataframe in {self.out_name}')
+        self.logger.info(f'Poocessed: {self.total_processed}')
+        self.logger.info(f'Writing dataframe in {self.out_name}')
         df.to_csv(self.out_name)
-        print ('Leaving')
+        self.logger.info('Leaving')
         self.master.destroy()
 
 if __name__ == '__main__': 
@@ -70,16 +87,19 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--replace', dest='replace', action='store_true',  help='Replace original input file')
     args=parser.parse_args()
 
-    # logging config
-    logging.basicConfig(level=logging.INFO)
-
     # read 
-    #logging.info(f'Reading {args.input}')
-    #logging.info(f'Reading ')
     df = pd.read_csv(args.input)
     # decide name of output file
+    if args.replace:
+        output_name = args.input
+    elif args.output:
+        output_name = args.output
+    else:
+        output_name = args.input.replace('.csv','_sentiment.csv')
+        
+    # loop with GUI
     top = tk.Tk()
-    my_gui = MyGUI(top, df, args.output)
+    my_gui = MyGUI(top, df, output_name)
     top.mainloop()
 
 
