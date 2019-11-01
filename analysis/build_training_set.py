@@ -29,10 +29,12 @@ if __name__ == '__main__':
         output_name = args.output
     else:
         output_name = args.input.replace('.csv','_sentiment.csv')
+    counter_done = 0
     # loop each row
     for index, row in df.iterrows():
         if row['sentiment'] != -99:
             continue
+        logging.info(f'Counter done: {counter_done}')
         print('Message:')
         print(row['title'],'\n',row['text'])
         try:
@@ -46,6 +48,7 @@ if __name__ == '__main__':
             logging.warning('Setting sentiment to neutral')
             sentiment = 3
         df.at[index,'sentiment'] = sentiment
+        counter_done += 1
         time.sleep(0.33)
 
     if not  output_created:
