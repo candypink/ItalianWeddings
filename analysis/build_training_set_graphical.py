@@ -28,7 +28,7 @@ class MyGUI:
 
         # GUI
         self.master = master
-        master.title('Sentiment analysis')
+        self.master.title('Sentiment analysis')
         # message text
         self.text = tk.Text(master, height=10, width=60,
                        font=("Arial", 18), wrap=tk.WORD)
